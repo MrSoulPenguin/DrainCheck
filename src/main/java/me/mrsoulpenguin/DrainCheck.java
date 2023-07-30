@@ -1,5 +1,8 @@
 package me.mrsoulpenguin;
 
+import com.strobel.decompiler.Decompiler;
+import com.strobel.decompiler.PlainTextOutput;
+
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
@@ -11,6 +14,7 @@ public class DrainCheck {
 
     public static void main(String[] args) {
         decompress(args[0], args[1]);
+        decompile(args[1]);
         Set<String> impactedFiles = scan(args[1]);
         System.out.println("Amount of impacted files: " + impactedFiles.size());
 
@@ -53,6 +57,39 @@ public class DrainCheck {
         }
     }
 
+    private static void decompile(String inputPath) {
+        File inputDir = new File(inputPath);
+        if (!inputDir.exists()) {
+            return;
+        }
+
+        File[] files = inputDir.listFiles();
+        if (files == null) {
+            return;
+        }
+
+        for (File file : files) {
+            if (file.isDirectory()) {
+                decompile(file.getAbsolutePath());
+            }
+
+            if (file.getName().endsWith(".class")) {
+                System.out.println("Decompiling " + file.getName());
+
+                PlainTextOutput output = new PlainTextOutput();
+                Decompiler.decompile(file.getAbsolutePath(), output);
+
+                File outputFile = new File(inputDir, file.getName().replace(".class", ".java"));
+                outputFile.getParentFile().mkdirs();
+                try (FileOutputStream fileOutputStream = new FileOutputStream(outputFile)) {
+                    fileOutputStream.write(output.toString().getBytes(StandardCharsets.UTF_8));
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        }
+    }
+
     private static Set<String> scan(String inputDir) {
         File dir = new File(inputDir);
         File[] files = dir.listFiles();
@@ -64,12 +101,14 @@ public class DrainCheck {
         for (File file : files) {
             if (file.isDirectory()) {
                 impactedFiles.addAll(scan(file.getAbsolutePath()));
-            } else if (file.getName().endsWith(".class")) {
+            } else if (file.getName().endsWith(".java")) {
                 System.out.println("Scanning " + file.getName());
 
                 try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
                     String line;
                     while ((line = reader.readLine()) != null) {
+                        if (file.getName().equals("PktSyncConfig.java"))
+                            System.out.println(line);
                         if (line.contains("ObjectInputStream") || line.contains("ObjectOutputStream")) {
                             impactedFiles.add(file.getAbsolutePath());
                             break;

@@ -4,7 +4,15 @@ plugins {
 }
 
 group = "me.mrsoulpenguin"
-version = "1.0"
+version = "1.1"
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation("org.bitbucket.mstrobel:procyon-compilertools:0.6.0")
+}
 
 tasks {
     test {

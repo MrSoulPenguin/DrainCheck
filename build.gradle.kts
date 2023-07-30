@@ -15,9 +15,6 @@ dependencies {
 }
 
 tasks {
-    test {
-        useJUnitPlatform()
-    }
 
     jar {
         enabled = false

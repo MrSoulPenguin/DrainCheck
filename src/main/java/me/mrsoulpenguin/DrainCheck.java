@@ -1,5 +1,9 @@
 package me.mrsoulpenguin;
 
+import com.strobel.decompiler.Decompiler;
+import com.strobel.decompiler.DecompilerSettings;
+import com.strobel.decompiler.PlainTextOutput;
+
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.util.HashSet;
@@ -11,6 +15,7 @@ public class DrainCheck {
 
     public static void main(String[] args) {
         decompress(args[0], args[1]);
+        decompile(args[1]);
         String[] impactedFiles = scan(args[1]);
 
         if (impactedFiles.length > 0) {
@@ -25,8 +30,7 @@ public class DrainCheck {
         }
     }
 
-    @SuppressWarnings("ResultOfMethodCallIgnored")
-    public static void decompress(String jarFilePath, String outputDir) {
+    private static void decompress(String jarFilePath, String outputDir) {
         try (JarInputStream jarInputStream = new JarInputStream(new FileInputStream(jarFilePath))) {
             JarEntry entry;
             while ((entry = jarInputStream.getNextJarEntry()) != null) {
@@ -49,7 +53,34 @@ public class DrainCheck {
         }
     }
 
-    public static String[] scan(String inputDir) {
+    private static void decompile(String inputDir) {
+        File dir = new File(inputDir);
+        File[] files = dir.listFiles();
+        if (files == null) {
+            return;
+        }
+
+        DecompilerSettings settings = DecompilerSettings.javaDefaults();
+
+        for (File file : files) {
+            if (file.isDirectory()) {
+                decompile(file.getAbsolutePath());
+            } else if (file.getName().endsWith(".class")) {
+                System.out.println("Decompiling " + file.getName());
+
+                try (FileOutputStream stream = new FileOutputStream(file);
+                     OutputStreamWriter writer = new OutputStreamWriter(stream)) {
+
+                    // TODO Fix issues with BufferUnderflowException
+                    Decompiler.decompile(file.getAbsolutePath(), new PlainTextOutput(writer), settings);
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        }
+    }
+
+    private static String[] scan(String inputDir) {
         File dir = new File(inputDir);
         File[] files = dir.listFiles();
         if (files == null) {

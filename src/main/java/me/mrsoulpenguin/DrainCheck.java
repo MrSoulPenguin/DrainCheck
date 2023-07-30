@@ -12,12 +12,14 @@ public class DrainCheck {
     public static void main(String[] args) {
         decompress(args[0], args[1]);
         Set<String> impactedFiles = scan(args[1]);
-        System.out.println("Amount of impacted files: " + impactedFiles.size());
+        System.out.println("Amount of possibly impacted files: " + impactedFiles.size());
 
         if (impactedFiles.size() > 0) {
-            System.out.println("Writing impacted files log");
-            File file = new File(args[1] + "/impacted_files.txt");
-            try (FileOutputStream fileOutputStream = new FileOutputStream(file)) {
+            System.out.println("Writing results");
+            Path jarPath = Path.of(args[0]);
+            File file = new File(jarPath.getParent() + "/results.txt");
+            try (FileOutputStream fileOutputStream = new FileOutputStream(file, true)) {
+                fileOutputStream.write((jarPath.getFileName() + System.lineSeparator()).getBytes(StandardCharsets.UTF_8));
                 for (String fileName : impactedFiles) {
                     String fileEntry = fileName + System.lineSeparator();
                     fileOutputStream.write(fileEntry.getBytes(StandardCharsets.UTF_8));
@@ -60,10 +62,10 @@ public class DrainCheck {
             return new HashSet<>();
         }
 
-        Set<String> impactedFiles = new HashSet<>();
+        Set<String> foundFiles = new HashSet<>();
         for (File file : files) {
             if (file.isDirectory()) {
-                impactedFiles.addAll(scan(file.getAbsolutePath()));
+                foundFiles.addAll(scan(file.getAbsolutePath()));
             } else if (file.getName().endsWith(".class")) {
                 System.out.println("Scanning " + file.getName());
 
@@ -71,7 +73,7 @@ public class DrainCheck {
                     String line;
                     while ((line = reader.readLine()) != null) {
                         if (line.contains("ObjectInputStream") || line.contains("ObjectOutputStream")) {
-                            impactedFiles.add(file.getAbsolutePath());
+                            foundFiles.add(file.getAbsolutePath());
                             break;
                         }
                     }
@@ -81,6 +83,6 @@ public class DrainCheck {
             }
         }
 
-        return impactedFiles;
+        return foundFiles;
     }
 }

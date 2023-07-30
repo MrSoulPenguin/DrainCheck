@@ -16,3 +16,6 @@ Have all of the jars you want to scan in one directory. It doesn't have to be th
 Then run the script with the path to the directory containing the jars as an arguement. Like the following.
 
 ``run_scan.bat C:\Users\bob\Desktop\jars``
+
+After the script is done. There will be a ``results.txt`` file in the directory that contains the jars. This file will have a list
+of the classes in the jars that make use of the ``ObjectInputStream`` or ``ObjectOutputStream`` objects.

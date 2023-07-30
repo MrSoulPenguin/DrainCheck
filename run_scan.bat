@@ -11,7 +11,7 @@ REM Set the input directory from the command-line argument
 set "source_directory=%~1"
 
 REM Change the following line to the location of the scan.jar file
-set "scan_jar=./DrainCheck-1.0.jar"
+set "scan_jar=./DrainCheck-1.1.jar"
 
 for %%I in ("%source_directory%\*.jar") do (
     set "jar_file=%%~nxI"

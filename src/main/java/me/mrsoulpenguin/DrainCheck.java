@@ -15,16 +15,16 @@ public class DrainCheck {
     public static void main(String[] args) {
         decompress(args[0], args[1]);
         decompile(args[1]);
-        Set<String> impactedFiles = scan(args[1]);
-        System.out.println("Amount of possibly impacted files: " + impactedFiles.size());
+        Set<String> foundFiles = scan(args[1]);
+        System.out.println("Amount of possibly impacted files: " + foundFiles.size());
 
-        if (impactedFiles.size() > 0) {
+        if (foundFiles.size() > 0) {
             System.out.println("Writing results");
             Path jarPath = Path.of(args[0]);
             File file = new File(jarPath.getParent() + "/results.txt");
             try (FileOutputStream fileOutputStream = new FileOutputStream(file, true)) {
                 fileOutputStream.write((jarPath.getFileName() + System.lineSeparator()).getBytes(StandardCharsets.UTF_8));
-                for (String fileName : impactedFiles) {
+                for (String fileName : foundFiles) {
                     String fileEntry = fileName + System.lineSeparator();
                     fileOutputStream.write(fileEntry.getBytes(StandardCharsets.UTF_8));
                 }

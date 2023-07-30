@@ -6,21 +6,6 @@ plugins {
 group = "me.mrsoulpenguin"
 version = "1.0"
 
-repositories {
-    mavenCentral()
-}
-
-dependencies {
-    implementation("org.bitbucket.mstrobel:procyon-compilertools:0.6.0")
-
-    testImplementation(platform("org.junit:junit-bom:5.9.1"))
-    testImplementation("org.junit.jupiter:junit-jupiter")
-}
-
-tasks.test {
-    useJUnitPlatform()
-}
-
 tasks {
     test {
         useJUnitPlatform()

@@ -11,6 +11,8 @@ depending on if you are running Windows or Linux respectively.
 
 Put the downloaded DrainCheck jar and script in the same directory.
 
+You need to have Java installed on your PC for the jar to run. Java 17 or higher should be fine.
+
 Have all of the jars you want to scan in one directory. It doesn't have to be the same as the DrainCheck jar and script.
 
 Then run the script with the path to the directory containing the jars as an arguement. Like the following.

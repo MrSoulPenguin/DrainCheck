@@ -3,6 +3,8 @@ An attempt at scanning minecraft mod jars to see if they may be impacted by the 
 
 Should be used as a way to see where to start looking for vulnerabilities. **Should not be used as a set in stone check**.
 
+Also, I know the vulnerablity only impacts ``ObjectInputStreams``. But just to be safe, this also checks for ``ObjectOutputStreams`` aswell.
+
 ## Usage
 Download the latest DrainCheck jar from the [releases](https://github.com/MrSoulPenguin/DrainCheck/releases). Along with run_scan.bat or run_scan.sh
 depending on if you are running Windows or Linux respectively.

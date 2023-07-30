@@ -10,7 +10,7 @@ fi
 source_directory="$1"
 
 # Change the following line to the location of the scan.jar file
-scan_jar="./DrainCheck-1.0.jar"
+scan_jar="./DrainCheck-1.1.jar"
 
 for jar_file in "$source_directory"/*.jar; do
     jar_file="$(basename "$jar_file")"
